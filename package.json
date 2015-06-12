@@ -1,0 +1,20 @@
+{
+  "name": "pogoseat",
+  "version": "1.0.0",
+  "description": "Demo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Andrew Pierno",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.1.0",
+    "gulp": "^3.9.0",
+    "gulp-watch": "^4.2.4"
+  },
+  "devDependencies": {
+    "reload": "^0.1.0"
+  }
+}

@@ -242,16 +242,21 @@
 				}
 				if ($('#q2').val() !== '' && input !== '') {
 					if (!okay) {
-						this._showError( 'EMAILFORMAT' );
+						this._showError('EMAILFORMAT');
+						return false;
+					}
+				}
+
+				if ($('#q2').val() === '' && input !== '') {
+					if (!okay) {
+						this._showError('EMAILFORMAT');
 						return false;
 					}
 				}
 		}
-
 		return true;
 	}
 
-	// TODO (next version..)
 	stepsForm.prototype._showError = function( err ) {
 		var message = '';
 		switch( err ) {
@@ -290,7 +295,7 @@
 		classie.removeClass( this.error, 'show' );
 	}
 
-	// add to global namespace
+	// add to global namespace :(
 	window.stepsForm = stepsForm;
 
 })( window );

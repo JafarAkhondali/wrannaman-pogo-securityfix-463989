@@ -1,4 +1,3 @@
-// lets get some data!
 (function() {
   var events = [];
   var index;
@@ -9,73 +8,15 @@
     url: "https://api.pogoseat.com/v0/venue/by-alias/giants/events/upcoming",
     statusCode: {
       404: function() {
-        alert( "page not found" ); ///*********** FIX MEEEE!!!!!!!
+        console.log('error 404');
       }
     }
   })
   .done(function( data ) {
-    //console.log( "data:", data);
+    console.log( "data:", data);
     events = data;
     localStorage.setItem('events', JSON.stringify(data));
-
-    for (var i=0; i<data.length; i++) {
-      //console.log('adding!');
-      var parent = $('.cbp-ig-grid');
-      var li = document.createElement('li');
-      li.id = i;
-      var a = document.createElement('a');
-      a.href="";
-      a.style.color = data[i].color_pallet.c1;
-      var h3 = document.createElement('h3');
-      h3.className = "cbp-ig-title changeColor";
-      h3.innerHTML = data[i].event_title;
-
-      $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1)
-
-
-      var p = document.createElement('p');
-      p.innerHTML = data[i].timeTillLive + " @ " + data[i].location_name;
-
-      var img = document.createElement('img');
-      img.src = "https://cdn.pogoseat.com/" + data[i].away_team_logo;
-      var span2 = document.createElement('span');
-      span2.className = "cbp-ig-category";
-
-      var check = document.createElement('div');
-      check.className = "checkmarkAdd";
-
-      var button = document.createElement('button');
-      button.innerHTML = 'Select';
-      button.dataset.label = 'Select';
-      button.style.backgroundcolor = data[i].color_pallet.c1 ;
-
-      a.appendChild(check);
-      a.appendChild(img);
-      a.appendChild(h3);
-      a.appendChild(p);
-      a.appendChild(span2);
-      a.appendChild(button);
-      li.appendChild(a);
-      //console.log(li);
-      parent[0].appendChild(li);
-
-    } // end loop
-    $('a').append
-    // fun!
-    $("a").click(function(event){
-      event.preventDefault();
-      $('div').removeClass('checkmark');
-      //$(this).children("div").addClass('checkmark');
-
-      // index from our data array!
-      var dataElement = $(this).parent().attr('id');
-      //console.log(dataElement);
-    });
-
-    $("a").hover(function(){
-      $('h3').css("color", data[0].color_pallet.c1);
-      $('p').css("color", data[0].color_pallet.c1);
-    })
+    setEvents(data);
   });
 
   // button event
@@ -117,9 +58,11 @@
         var btns = document.querySelectorAll('button');
         for (var i=btns.length-1;i>=0;i--) {
           btns[i].addEventListener('click', buttonLoader);
-          $(btns[i]).css('background-color', events[0].color_pallet.c1)
+          var color = JSON.parse(localStorage.getItem('events'));
+          //console.log(color[0])
+          $(btns[i]).css('background-color', 'rgb(247, 124, 51)')
         }
-    }, 300);
+    }, 350);
 })();
 
 new stepsForm( theForm, {
@@ -140,25 +83,36 @@ new stepsForm( theForm, {
     var data = {
       event_id: event_id,
       name: name,
-      email: email || "",
-      phone: phone || ""
+      email: email || " ",
+      phone: phone || " "
     }
 
     // Make POST request
     var url = 'https://join.pogoseat.com/frontend/submission';
-    // curl -d "event_id=123&name=123&email=&phone=123" https://join.pogoseat.com/frontend/submission
-    //console.log(name, email, phone, event_id);
     $.ajax({
       type: "POST",
       url: url,
       data: data,
+      statusCode: {
+        500: function(e) {
+          console.log(e);
+          var error = JSON.parse(e.responseText).message;
+          console.log(error);
+          $( '.final-message' ).html('Uh oh, there was an error: <br> ' + error);
+          $( '.final-message').css('visibility', 'visible');
+        }
+      },
       success: success,
-      dataType: 'JSON'
+      error: error
     });
+    function error(d) {
+      var messageEl = theForm.querySelector( '.final-message' );
+      messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
+      classie.addClass( messageEl, 'show' );
+    }
 
     // success callback
     function success(d) {
-      //console.log(d);
       var messageEl = theForm.querySelector( '.final-message' );
 
       if (d.type == 'success' || d.status == 'success') {
@@ -175,3 +129,65 @@ new stepsForm( theForm, {
     }
   }
 });
+
+function setEvents(data) {
+
+  for (var i=0; i<data.length; i++) {
+    //console.log('adding!');
+    if (!data[i].color_pallet.c1) {
+      data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
+    }
+
+    var parent = $('.cbp-ig-grid');
+    var li = document.createElement('li');
+    li.id = i;
+    var a = document.createElement('a');
+    a.href="";
+    a.style.color = data[i].color_pallet.c1;
+    var h3 = document.createElement('h3');
+    h3.className = "cbp-ig-title changeColor";
+    h3.innerHTML = data[i].event_title;
+
+    $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
+
+    var p = document.createElement('p');
+    p.innerHTML = data[i].timeTillLive + " @ " + data[i].location_name;
+
+    var img = document.createElement('img');
+    if (data[i].away_team_logo) {
+      img.src = "https://cdn.pogoseat.com/" + data[i].away_team_logo;
+    } else {
+      img.src = "https://cdn.pogoseat.com/" + data[i].home_team_logo;
+    }
+
+    var span2 = document.createElement('span');
+    span2.className = "cbp-ig-category";
+
+    var button = document.createElement('button');
+    button.innerHTML = 'Select';
+    button.dataset.label = 'Select';
+    button.style.backgroundcolor = data[i].color_pallet.c1 ;
+
+    a.appendChild(img);
+    a.appendChild(h3);
+    a.appendChild(p);
+    a.appendChild(span2);
+    a.appendChild(button);
+    li.appendChild(a);
+
+    parent[0].appendChild(li);
+
+  } // end loop
+
+  $("a").click(function(event){
+    event.preventDefault();
+    $('div').removeClass('checkmark');
+    // index from our data array!
+    var dataElement = $(this).parent().attr('id');
+  });
+
+  $("a").hover(function(){
+    $('h3').css("color", data[0].color_pallet.c1);
+    $('p').css("color", data[0].color_pallet.c1);
+  })
+}

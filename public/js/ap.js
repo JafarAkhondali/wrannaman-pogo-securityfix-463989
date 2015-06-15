@@ -1,4 +1,4 @@
-(function() {
+$(document).ready(function() {
   var events = [];
   var index;
   var theForm = document.getElementById( 'theForm' );
@@ -19,52 +19,122 @@
     setEvents(data);
   });
 
-  // button event
-  setTimeout(function() {
-    var buttonLoader = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      //console.log('clicked')
-      e.target.classList.add('loading');
-      e.target.setAttribute('disabled','disabled');
+  // // button event
+  // setTimeout(function() {
+  //
+  //
+  //     $.on('click','button', buttonLoader);
+  //     // for (var i=btns.length-1;i>=0;i--) {
+  //     //   //event listener for button.
+  //     //   btns[i].on('click', buttonLoader);
+  //     //   var color = JSON.parse(localStorage.getItem('events'));
+  //     //   //console.log(color[0])
+  //     //   $(btns[i]).css('background-color', 'rgb(247, 124, 51)');
+  //     // }
+  //   }, 350);
+}); // on ready end
 
-      $('div').removeClass('checkmark');
 
-      setTimeout(function(){
-        e.target.classList.remove('loading');
-        e.target.removeAttribute('disabled');
+// click handler for button
+var buttonLoader = function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.target.classList.add('loading');
+  e.target.setAttribute('disabled','disabled');
 
-        // index of selected element from data array.
-        window.eventDataIndex = $(e.target)[0].closest('li').id || null;
-        if (!window.eventDataIndex) {
+  setTimeout(function(){
+    e.target.classList.remove('loading');
+    e.target.removeAttribute('disabled');
 
-        } else {
-          $('#gridSectionH2').hide(300, function() {
-            $('#gridSection').hide(300, function() {
-              $('#formSection').show(300);
-              $('button').css('background-color', 'transparent');
-              var events = JSON.parse(localStorage.getItem('events'));
-              var event = events[window.eventDataIndex];
-              $('#event-info').text("You selected: "
-                + event.event_title
-                + " ("
-                  + event.location_name
-                  + ")");
-                })
-              });
-            }
-          },1500);
-        };
-        var btns = document.querySelectorAll('button');
-        for (var i=btns.length-1;i>=0;i--) {
-          btns[i].addEventListener('click', buttonLoader);
-          var color = JSON.parse(localStorage.getItem('events'));
-          //console.log(color[0])
-          $(btns[i]).css('background-color', 'rgb(247, 124, 51)')
-        }
-    }, 350);
-})();
+    // index of selected element from data array.
+    window.eventDataIndex = $(e.target)[0].closest('li').id || null;
+    
+      $('#gridSectionH2').hide(300, function() {
+        $('#gridSection').hide(300, function() {
+          $('#formSection').show(300);
+          $('button').css('background-color', 'transparent');
+          var events = JSON.parse(localStorage.getItem('events'));
+          var event = events[window.eventDataIndex];
+          $('#event-info').text("You selected: "
+              + event.event_title
+              + " ("
+              + event.location_name
+              + ")");
+            })
+          });
 
+      },1500);
+    }; // end of click event function
+
+
+function setEvents(data) {
+
+  for (var i=0; i<data.length; i++) {
+    //console.log('adding!');
+    if (!data[i].color_pallet.c1) {
+      data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
+    }
+
+    var parent = $('.cbp-ig-grid');
+    var li = document.createElement('li');
+    li.id = i;
+    var a = document.createElement('a');
+    a.href="";
+    a.style.color = data[i].color_pallet.c1;
+    var h3 = document.createElement('h3');
+    h3.className = "cbp-ig-title changeColor";
+    h3.innerHTML = data[i].event_title;
+
+    $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
+
+    var p = document.createElement('p');
+    p.innerHTML = data[i].timeTillLive + " @ " + data[i].location_name;
+
+    var img = document.createElement('img');
+    if (data[i].away_team_logo) {
+      img.src = "https://cdn.pogoseat.com/" + data[i].away_team_logo;
+    } else {
+      img.src = "https://cdn.pogoseat.com/" + data[i].home_team_logo;
+    }
+
+    var span2 = document.createElement('span');
+    span2.className = "cbp-ig-category";
+
+    var button = document.createElement('button');
+    button.innerHTML = 'Select';
+    button.dataset.label = 'Select';
+    button.style.backgroundcolor = data[i].color_pallet.c1 ;
+
+    // set click handler for buttons
+    $('a').on('click', 'button', buttonLoader);
+
+    a.appendChild(img);
+    a.appendChild(h3);
+    a.appendChild(p);
+    a.appendChild(span2);
+    a.appendChild(button);
+    li.appendChild(a);
+
+    parent[0].appendChild(li);
+
+  } // end loop
+
+  $("a").click(function(event){
+    event.preventDefault();
+    $('div').removeClass('checkmark');
+    // index from our data array!
+    var dataElement = $(this).parent().attr('id');
+  });
+
+  $("a").hover(function(){
+    $('h3').css("color", data[0].color_pallet.c1);
+    $('p').css("color", data[0].color_pallet.c1);
+  })
+}
+
+
+
+// for form
 new stepsForm( theForm, {
   onSubmit : function( form ) {
     // hide form
@@ -75,6 +145,7 @@ new stepsForm( theForm, {
     var email = $('#q3').val();
     var phone = $('#q2').val();
     if (!email) {
+
       email = " ";
     }
     if (!phone) {
@@ -129,65 +200,3 @@ new stepsForm( theForm, {
     }
   }
 });
-
-function setEvents(data) {
-
-  for (var i=0; i<data.length; i++) {
-    //console.log('adding!');
-    if (!data[i].color_pallet.c1) {
-      data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
-    }
-
-    var parent = $('.cbp-ig-grid');
-    var li = document.createElement('li');
-    li.id = i;
-    var a = document.createElement('a');
-    a.href="";
-    a.style.color = data[i].color_pallet.c1;
-    var h3 = document.createElement('h3');
-    h3.className = "cbp-ig-title changeColor";
-    h3.innerHTML = data[i].event_title;
-
-    $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
-
-    var p = document.createElement('p');
-    p.innerHTML = data[i].timeTillLive + " @ " + data[i].location_name;
-
-    var img = document.createElement('img');
-    if (data[i].away_team_logo) {
-      img.src = "https://cdn.pogoseat.com/" + data[i].away_team_logo;
-    } else {
-      img.src = "https://cdn.pogoseat.com/" + data[i].home_team_logo;
-    }
-
-    var span2 = document.createElement('span');
-    span2.className = "cbp-ig-category";
-
-    var button = document.createElement('button');
-    button.innerHTML = 'Select';
-    button.dataset.label = 'Select';
-    button.style.backgroundcolor = data[i].color_pallet.c1 ;
-
-    a.appendChild(img);
-    a.appendChild(h3);
-    a.appendChild(p);
-    a.appendChild(span2);
-    a.appendChild(button);
-    li.appendChild(a);
-
-    parent[0].appendChild(li);
-
-  } // end loop
-
-  $("a").click(function(event){
-    event.preventDefault();
-    $('div').removeClass('checkmark');
-    // index from our data array!
-    var dataElement = $(this).parent().attr('id');
-  });
-
-  $("a").hover(function(){
-    $('h3').css("color", data[0].color_pallet.c1);
-    $('p').css("color", data[0].color_pallet.c1);
-  })
-}

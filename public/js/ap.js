@@ -82,35 +82,23 @@ function setEvents(data) {
       data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
     }
 
-    //var parent =
+    //create list element, append to grid container
     $( "<li id='" + i + "'>" ).appendTo($('.cbp-ig-grid'));
-
+    // create element, append inside list element
     $("<a href='' style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
+    $("<h3 class='cbp-ig-title changeColor'>" + data[i].event_title + "</h3>").appendTo($('#' + i));
+    $("<p>" + data[i].timeTillLive + " @ " + data[i].location_name+ "</p>").appendTo($('#' + i));
+
+    if (data[i].away_team_logo) {
+      $("<img src=https://cdn.pogoseat.com/" + data[i].away_team_logo + ">").appendTo($('#' + i));
+    } else {
+      $("<img src=https://cdn.pogoseat.com/" + data[i].home_team_logo + ">").appendTo($('#' + i));
+    }
 
 
-    // $( "<p>Test</p>" ).appendTo( ".inner" );
+    $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
 
-    //var li = document.createElement('li');
-    //li.id = i;
-    // var a = document.createElement('a');
-    // a.href="";
-    // a.style.color = data[i].color_pallet.c1;
-    // var h3 = document.createElement('h3');
-    // h3.className = "cbp-ig-title changeColor";
-    // h3.innerHTML = data[i].event_title;
-    //
-    // $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
-    //
-    // var p = document.createElement('p');
-    // p.innerHTML = data[i].timeTillLive + " @ " + data[i].location_name;
-    //
-    // var img = document.createElement('img');
-    // if (data[i].away_team_logo) {
-    //   img.src = "https://cdn.pogoseat.com/" + data[i].away_team_logo;
-    // } else {
-    //   img.src = "https://cdn.pogoseat.com/" + data[i].home_team_logo;
-    // }
-    //
+
     // var span2 = document.createElement('span');
     // span2.className = "cbp-ig-category";
     //

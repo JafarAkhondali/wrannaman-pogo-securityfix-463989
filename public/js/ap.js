@@ -61,15 +61,10 @@ function setEvents(data) {
     if (!data[i].color_pallet.c1) {
       data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
     }
-
     //create list element, append to grid container
     $( "<li id='" + i + "'>" ).appendTo($('.cbp-ig-grid'));
     // create element, append inside list element
     $("<a href='#' id='a"+i+"' style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
-    $('li').on('click', '#doNothing', function(e) {
-      e.preventDefault();
-      return false;
-    })
 
     // if away team logo isn't there, use home team logo
     if (data[i].away_team_logo) {

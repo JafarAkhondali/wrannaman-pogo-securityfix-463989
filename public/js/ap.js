@@ -24,7 +24,6 @@ $(document).ready(function() {
 
 // click handler for button
 function buttonLoader(e) {
-  //console.log('clicked');
   e.preventDefault();
   e.stopPropagation();
   $('#gridSectionH2').hide(500, function() {
@@ -37,24 +36,25 @@ function buttonLoader(e) {
 
   setTimeout(function(){
     // index of selected element from data array.
-    var index = $(e.target).parent().parent()[0].id
-    //console.log(selectedButton);
+    var index = $(e.target).parent().parent()[0].id;
+
+    //set this as global to retrieve from the form
     window.eventDataIndex = index;
 
-        $('button').css('background-color', 'transparent');
-        var events = JSON.parse(localStorage.getItem('events'));
-        console.log(events);
-        var event = events[index];
-        $('#event-info').text("You selected: "
-            + event.event_title
-            + " ("
-            + event.location_name
-            + ")");
-      },900);
+    $('button').css('background-color', 'transparent');
+    var events = JSON.parse(localStorage.getItem('events'));
+    console.log(events);
+    var event = events[index];
+    $('#event-info').text("You selected: "
+      + event.event_title
+      + " ("
+        + event.location_name
+        + ")");
+      },900); // end set timeout
     }; // end of click event function
 
 
-// create nodes for each event.
+// create nodes for each event and put them on the DOM
 function setEvents(data) {
   console.log(data.length);
   for (var i=0; i<data.length; i++) {
@@ -71,18 +71,16 @@ function setEvents(data) {
       return false;
     })
 
+    // if away team logo isn't there, use home team logo
     if (data[i].away_team_logo) {
       $("<img src=https://cdn.pogoseat.com" + data[i].away_team_logo + ">").appendTo($('#a' + i));
     } else {
       $("<img src=https://cdn.pogoseat.com" + data[i].home_team_logo + ">").appendTo($('#a' + i));
     }
-
     $("<h3 class='cbp-ig-title changeColor'>" + data[i].event_title + "</h3>").appendTo($('#a' + i));
     $("<p>" + data[i].timeTillLive + " @ " + data[i].location_name+ "</p>").appendTo($('#a' + i));
     $("<span class='cbp-ig-category'> </span>").appendTo($('#a' + i));
-
     $("<button id='' label='Select' style='color:white;background-color:" + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#a' + i));
-
     $('a').on('click', 'button', buttonLoader);
 
     $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
@@ -93,20 +91,11 @@ function setEvents(data) {
     })
 
   } // end loop
-
-  // $("a").click(function(event){
-  //   event.preventDefault();
-  //   $('div').removeClass('checkmark');
-  //   // index from our data array!
-  //   var dataElement = $(this).parent().attr('id');
-  // });
-
-
-}
+} // end setEvents
 
 
 
-// for form
+// instantiate new form
 new stepsForm( theForm, {
   onSubmit : function( form ) {
     // hide form
@@ -114,16 +103,13 @@ new stepsForm( theForm, {
     //classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
     var events = JSON.parse(localStorage.getItem('events'));
     var event_id = events[window.eventDataIndex].event_id;
+
+    // form values
     var name = $('#q1').val();
     var email = $('#q3').val();
     var phone = $('#q2').val();
-    if (!email) {
-
-      email = " ";
-    }
-    if (!phone) {
-      phone = " ";
-    }
+    if (!email) { email = " "; }
+    if (!phone) { phone = " "; }
     var data = {
       event_id: event_id,
       name: name,
@@ -140,16 +126,19 @@ new stepsForm( theForm, {
       success: success,
       error: error
     });
+
     function error(d) {
-      alert('error callback');
       $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
       messageEl.innerHTML =
       classie.addClass( messageEl, 'show' );
+      // reload page to reset the form.
+      setTimeout(function() {
+        location.reload();
+      },3000);
     }
 
     // success callback
     function success(d) {
-      alert('success callback');
       var messageEl = theForm.querySelector( '.final-message' );
 
       if (d.type == 'success' || d.status == 'success') {
@@ -158,11 +147,14 @@ new stepsForm( theForm, {
         messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
       }
 
+      // show final message
       classie.addClass( messageEl, 'show' );
 
+      // reload page to reset the form.
       setTimeout(function() {
         location.reload();
       },3000);
+
     }
   }
 });

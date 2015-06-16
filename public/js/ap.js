@@ -85,16 +85,20 @@ function setEvents(data) {
     //create list element, append to grid container
     $( "<li id='" + i + "'>" ).appendTo($('.cbp-ig-grid'));
     // create element, append inside list element
-    $("<a href='' style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
+    $("<a href='#' style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
+
+    if (data[i].away_team_logo) {
+      $("<img src=https://cdn.pogoseat.com" + data[i].away_team_logo + ">").appendTo($('#' + i));
+    } else {
+      $("<img src=https://cdn.pogoseat.com" + data[i].home_team_logo + ">").appendTo($('#' + i));
+    }
+    
     $("<h3 class='cbp-ig-title changeColor'>" + data[i].event_title + "</h3>").appendTo($('#' + i));
     $("<p>" + data[i].timeTillLive + " @ " + data[i].location_name+ "</p>").appendTo($('#' + i));
 
-    if (data[i].away_team_logo) {
-      $("<img src=https://cdn.pogoseat.com/" + data[i].away_team_logo + ">").appendTo($('#' + i));
-    } else {
-      $("<img src=https://cdn.pogoseat.com/" + data[i].home_team_logo + ">").appendTo($('#' + i));
-    }
 
+
+    $("<button label='Select' style='background-color: " + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#' + i));
 
     $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
 

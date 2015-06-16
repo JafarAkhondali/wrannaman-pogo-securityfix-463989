@@ -24,16 +24,13 @@ function buttonLoader(e) {
   e.stopPropagation();
   e.target.classList.add('loading');
   e.target.setAttribute('disabled','disabled');
-
-  $('#gridSectionH2').hide(1000, function() {
-    $('#gridSection').hide(400, function() {
-      $('#formSection').show(300);
-      $('button').css('background-color', 'transparent');
-    }); // end hide grid section
-  }); // end hide grid section h2
-
+  $('button').css('background-color', 'transparent');
 
   setTimeout(function(){
+    $('#gridSection').hide(300); // end hide grid section
+    $('#gridSectionH2').hide(400, function() {
+      $('#formSection').show(300);
+    }); // end hide grid section h2
     // index of selected element from data array.
     var index = $(e.target).parent().parent()[0].id;
 
@@ -82,65 +79,65 @@ function setEvents(data) {
   } // end loop
 } // end setEvents
 
-    // instantiate new form
-    new stepsForm( theForm, {
-      onSubmit : function( form ) {
-        // hide form
-        $('.simform-inner').hide();
-        var events = JSON.parse(localStorage.getItem('events'));
-        var event_id = events[window.eventDataIndex].event_id;
+// instantiate new form
+new stepsForm( theForm, {
+  onSubmit : function( form ) {
+    // hide form
+    $('.simform-inner').hide();
+    var events = JSON.parse(localStorage.getItem('events'));
+    var event_id = events[window.eventDataIndex].event_id;
 
-        // form values
-        var name = $('#q1').val();
-        var email = $('#q3').val();
-        var phone = $('#q2').val();
-        if (!email) { email = " "; }
-        if (!phone) { phone = " "; }
-        var data = {
-          event_id: event_id,
-          name: name,
-          email: email || " ",
-          phone: phone || " "
-        }
+    // form values
+    var name = $('#q1').val();
+    var email = $('#q3').val();
+    var phone = $('#q2').val();
+    if (!email) { email = " "; }
+    if (!phone) { phone = " "; }
+    var data = {
+      event_id: event_id,
+      name: name,
+      email: email || " ",
+      phone: phone || " "
+    }
 
-        // Make POST request
-        var url = 'https://join.pogoseat.com/frontend/submission';
-        $.ajax({
-          type: "POST",
-          url: url,
-          data: data,
-          success: success,
-          error: error
-        });
-
-        // error callback
-        function error(d) {
-          $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
-          messageEl.innerHTML =
-          classie.addClass( messageEl, 'show' );
-          // reload page to reset the form.
-          setTimeout(function() {
-            location.reload();
-          },3000);
-        }
-
-        // success callback
-        function success(d) {
-          var messageEl = theForm.querySelector( '.final-message' );
-
-          if (d.type == 'success' || d.status == 'success') {
-            messageEl.innerHTML = 'You will start receiving updates immediately!';
-          } else {
-            messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
-          }
-
-          // show final message
-          classie.addClass( messageEl, 'show' );
-
-          // reload page to reset the form.
-          setTimeout(function() {
-            location.reload();
-          },3000);
-        }
-      }
+    // Make POST request
+    var url = 'https://join.pogoseat.com/frontend/submission';
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: data,
+      success: success,
+      error: error
     });
+
+    // error callback
+    function error(d) {
+      $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
+      messageEl.innerHTML =
+      classie.addClass( messageEl, 'show' );
+      // reload page to reset the form.
+      setTimeout(function() {
+        location.reload();
+      },3000);
+    }
+
+    // success callback
+    function success(d) {
+      var messageEl = theForm.querySelector( '.final-message' );
+
+      if (d.type == 'success' || d.status == 'success') {
+        messageEl.innerHTML = 'You will start receiving updates immediately!';
+      } else {
+        messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
+      }
+
+      // show final message
+      classie.addClass( messageEl, 'show' );
+
+      // reload page to reset the form.
+      setTimeout(function() {
+        location.reload();
+      },3000);
+    }
+  }
+});

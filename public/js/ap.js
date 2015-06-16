@@ -27,51 +27,30 @@ function buttonLoader(e) {
   //console.log('clicked');
   e.preventDefault();
   e.stopPropagation();
+  $('#gridSectionH2').hide(500, function() {
+    $('#gridSection').hide(400, function() {
+      $('#formSection').show(300);
+    }); // end hide grid section
+  }); // end hide grid section h2
   e.target.classList.add('loading');
   e.target.setAttribute('disabled','disabled');
 
-      $('button').css('background-color', 'transparent');
-      var events = JSON.parse(localStorage.getItem('events'));
-      var event = events[window.eventDataIndex];
-      $('#event-info').text("You selected: "
-          + event.event_title
-          + " ("
-          + event.location_name
-          + ")");
-
   setTimeout(function(){
-    $('#gridSectionH2').hide(300, function() {
-      $('#gridSection').hide(300, function() {
-        $('#formSection').show(300);
-      }); // end hide grid section
-    }); // end hide grid section h2
-
-
-
-
-        e.target.classList.remove('loading');
-        e.target.removeAttribute('disabled');
+    // index of selected element from data array.
+    var index = $(e.target).parent().parent()[0].id
+    //console.log(selectedButton);
+    window.eventDataIndex = index;
 
         $('button').css('background-color', 'transparent');
-
-        window.eventDataIndex = $(e.target)[0].closest('li').id || null;
-
-    // index of selected element from data array.
-    window.eventDataIndex = $(e.target)[0].closest('li').id || null;
-
-
-          $('button').css('background-color', 'transparent');
-          var events = JSON.parse(localStorage.getItem('events'));
-          var event = events[window.eventDataIndex];
-          $('#event-info').text("You selected: "
-              + event.event_title
-              + " ("
-              + event.location_name
-              + ")");
-
-
-
-      },1500);
+        var events = JSON.parse(localStorage.getItem('events'));
+        console.log(events);
+        var event = events[index];
+        $('#event-info').text("You selected: "
+            + event.event_title
+            + " ("
+            + event.location_name
+            + ")");
+      },900);
     }; // end of click event function
 
 
@@ -86,7 +65,7 @@ function setEvents(data) {
     //create list element, append to grid container
     $( "<li id='" + i + "'>" ).appendTo($('.cbp-ig-grid'));
     // create element, append inside list element
-    $("<a href='#doNothing' id='#a'"+i+" style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
+    $("<a href='#' id='a"+i+"' style='color:'" + data[i].color_pallet.c1 +"'>").appendTo($('#' + i));
     $('li').on('click', '#doNothing', function(e) {
       e.preventDefault();
       return false;
@@ -102,7 +81,8 @@ function setEvents(data) {
     $("<p>" + data[i].timeTillLive + " @ " + data[i].location_name+ "</p>").appendTo($('#a' + i));
     $("<span class='cbp-ig-category'> </span>").appendTo($('#a' + i));
 
-    $("<button label='Select' style='color:white;background-color:" + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#a' + i));
+    $("<button id='' label='Select' style='color:white;background-color:" + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#a' + i));
+
     $('a').on('click', 'button', buttonLoader);
 
     $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);

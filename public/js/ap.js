@@ -8,9 +8,7 @@ $(document).ready(function() {
   $.ajax({
     url: "https://api.pogoseat.com/v0/venue/by-alias/giants/events/upcoming",
     statusCode: {
-      404: function() {
-        console.log('error 404');
-      }
+      404: function() { console.log('error 404'); }
     }
   })
   .done(function( data ) {
@@ -30,6 +28,7 @@ function buttonLoader(e) {
   $('#gridSectionH2').hide(1000, function() {
     $('#gridSection').hide(400, function() {
       $('#formSection').show(300);
+      $('button').css('background-color', 'transparent');
     }); // end hide grid section
   }); // end hide grid section h2
 
@@ -41,20 +40,18 @@ function buttonLoader(e) {
     //set this as global to retrieve from the form
     window.eventDataIndex = index || 0;
 
-    $('button').css('background-color', 'transparent');
     var events = JSON.parse(localStorage.getItem('events'));
     var event = events[index];
     $('#event-info').text("You selected: "
       + event.event_title
       + " ("
-        + event.location_name
-        + ")");
-      },900); // end set timeout
-    }; // end of click event function
+      + event.location_name
+      + ")");
+  },900); // end set timeout
+}; // end buttonLoader function
 
-// create nodes for each event and put them on the DOM
+    // create nodes for each event and put them on the DOM
 function setEvents(data) {
-
   for (var i=0; i<data.length; i++) {
     if (!data[i].color_pallet.c1) {
       data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
@@ -81,70 +78,69 @@ function setEvents(data) {
     $("a").hover(function(){
       $('h3').css("color", data[0].color_pallet.c1);
       $('p').css("color", data[0].color_pallet.c1);
-    })
-
+    });
   } // end loop
 } // end setEvents
 
-// instantiate new form
-new stepsForm( theForm, {
-  onSubmit : function( form ) {
-    // hide form
-    $('.simform-inner').hide();
-    var events = JSON.parse(localStorage.getItem('events'));
-    var event_id = events[window.eventDataIndex].event_id;
+    // instantiate new form
+    new stepsForm( theForm, {
+      onSubmit : function( form ) {
+        // hide form
+        $('.simform-inner').hide();
+        var events = JSON.parse(localStorage.getItem('events'));
+        var event_id = events[window.eventDataIndex].event_id;
 
-    // form values
-    var name = $('#q1').val();
-    var email = $('#q3').val();
-    var phone = $('#q2').val();
-    if (!email) { email = " "; }
-    if (!phone) { phone = " "; }
-    var data = {
-      event_id: event_id,
-      name: name,
-      email: email || " ",
-      phone: phone || " "
-    }
+        // form values
+        var name = $('#q1').val();
+        var email = $('#q3').val();
+        var phone = $('#q2').val();
+        if (!email) { email = " "; }
+        if (!phone) { phone = " "; }
+        var data = {
+          event_id: event_id,
+          name: name,
+          email: email || " ",
+          phone: phone || " "
+        }
 
-    // Make POST request
-    var url = 'https://join.pogoseat.com/frontend/submission';
-    $.ajax({
-      type: "POST",
-      url: url,
-      data: data,
-      success: success,
-      error: error
-    });
+        // Make POST request
+        var url = 'https://join.pogoseat.com/frontend/submission';
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: data,
+          success: success,
+          error: error
+        });
 
-    // error callback
-    function error(d) {
-      $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
-      messageEl.innerHTML =
-      classie.addClass( messageEl, 'show' );
-      // reload page to reset the form.
-      setTimeout(function() {
-        location.reload();
-      },3000);
-    }
+        // error callback
+        function error(d) {
+          $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
+          messageEl.innerHTML =
+          classie.addClass( messageEl, 'show' );
+          // reload page to reset the form.
+          setTimeout(function() {
+            location.reload();
+          },3000);
+        }
 
-    // success callback
-    function success(d) {
-      var messageEl = theForm.querySelector( '.final-message' );
+        // success callback
+        function success(d) {
+          var messageEl = theForm.querySelector( '.final-message' );
 
-      if (d.type == 'success' || d.status == 'success') {
-        messageEl.innerHTML = 'You will start receiving updates immediately!';
-      } else {
-        messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
+          if (d.type == 'success' || d.status == 'success') {
+            messageEl.innerHTML = 'You will start receiving updates immediately!';
+          } else {
+            messageEl.innerHTML = 'Uh oh, there was an error, please fill out the form again.';
+          }
+
+          // show final message
+          classie.addClass( messageEl, 'show' );
+
+          // reload page to reset the form.
+          setTimeout(function() {
+            location.reload();
+          },3000);
+        }
       }
-
-      // show final message
-      classie.addClass( messageEl, 'show' );
-
-      // reload page to reset the form.
-      setTimeout(function() {
-        location.reload();
-      },3000);
-    }
-  }
-});
+    });

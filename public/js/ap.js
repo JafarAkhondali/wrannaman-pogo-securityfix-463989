@@ -92,36 +92,14 @@ function setEvents(data) {
     } else {
       $("<img src=https://cdn.pogoseat.com" + data[i].home_team_logo + ">").appendTo($('#' + i));
     }
-    
+
     $("<h3 class='cbp-ig-title changeColor'>" + data[i].event_title + "</h3>").appendTo($('#' + i));
     $("<p>" + data[i].timeTillLive + " @ " + data[i].location_name+ "</p>").appendTo($('#' + i));
+    $("<span class='cbp-ig-category'> </span>").appendTo($('#' + i));
 
-
-
-    $("<button label='Select' style='background-color: " + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#' + i));
+    $("<button onclick="+buttonLoader+"label='Select' style='color:white;background-color:" + data[i].color_pallet.c1 +"'> Select </button>").appendTo($('#' + i));
 
     $('.cbp-ig-title:before').css('background', data[i].color_pallet.c1);
-
-
-    // var span2 = document.createElement('span');
-    // span2.className = "cbp-ig-category";
-    //
-    // var button = document.createElement('button');
-    // button.innerHTML = 'Select';
-    // button.dataset.label = 'Select';
-    // button.style.backgroundcolor = data[i].color_pallet.c1 ;
-    //
-    // // set click handler for buttons
-    // $('a').on('click', 'button', buttonLoader);
-    //
-    // a.appendChild(img);
-    // a.appendChild(h3);
-    // a.appendChild(p);
-    // a.appendChild(span2);
-    // a.appendChild(button);
-    // li.appendChild(a);
-    //
-    // parent[0].appendChild(li);
 
   } // end loop
 

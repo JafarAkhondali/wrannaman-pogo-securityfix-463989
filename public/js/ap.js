@@ -14,36 +14,35 @@ $(document).ready(function() {
     }
   })
   .done(function( data ) {
-    console.log( "data:", data);
     events = data;
     localStorage.setItem('events', JSON.stringify(data));
     setEvents(data);
   });
 }); // on ready end
 
-
 // click handler for button
 function buttonLoader(e) {
   e.preventDefault();
   e.stopPropagation();
-  $('#gridSectionH2').hide(500, function() {
+  e.target.classList.add('loading');
+  e.target.setAttribute('disabled','disabled');
+
+  $('#gridSectionH2').hide(1000, function() {
     $('#gridSection').hide(400, function() {
       $('#formSection').show(300);
     }); // end hide grid section
   }); // end hide grid section h2
-  e.target.classList.add('loading');
-  e.target.setAttribute('disabled','disabled');
+
 
   setTimeout(function(){
     // index of selected element from data array.
     var index = $(e.target).parent().parent()[0].id;
 
     //set this as global to retrieve from the form
-    window.eventDataIndex = index;
+    window.eventDataIndex = index || 0;
 
     $('button').css('background-color', 'transparent');
     var events = JSON.parse(localStorage.getItem('events'));
-    console.log(events);
     var event = events[index];
     $('#event-info').text("You selected: "
       + event.event_title
@@ -53,10 +52,9 @@ function buttonLoader(e) {
       },900); // end set timeout
     }; // end of click event function
 
-
 // create nodes for each event and put them on the DOM
 function setEvents(data) {
-  console.log(data.length);
+
   for (var i=0; i<data.length; i++) {
     if (!data[i].color_pallet.c1) {
       data[i].color_pallet.c1 = 'rgb(247, 124, 51)';
@@ -88,14 +86,11 @@ function setEvents(data) {
   } // end loop
 } // end setEvents
 
-
-
 // instantiate new form
 new stepsForm( theForm, {
   onSubmit : function( form ) {
     // hide form
     $('.simform-inner').hide();
-    //classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
     var events = JSON.parse(localStorage.getItem('events'));
     var event_id = events[window.eventDataIndex].event_id;
 
@@ -122,6 +117,7 @@ new stepsForm( theForm, {
       error: error
     });
 
+    // error callback
     function error(d) {
       $( '.final-message' ).HTML = 'Uh oh, there was an error, please fill out the form again.';
       messageEl.innerHTML =
@@ -149,7 +145,6 @@ new stepsForm( theForm, {
       setTimeout(function() {
         location.reload();
       },3000);
-
     }
   }
 });
